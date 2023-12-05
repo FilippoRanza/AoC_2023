@@ -35,4 +35,32 @@
         mat->cols = mat->rows = 0;                                             \
     }
 
+#define decl_array(type_name, name, type)                                      \
+    typedef struct {                                                           \
+        type *items;                                                           \
+        size_t len;                                                            \
+        size_t capacity;                                                       \
+    } type_name;                                                               \
+    int name##_append(type_name *vect, type item) {                            \
+        if (vect->len == vect->capacity) {                                     \
+            vect->capacity *= 2;                                               \
+            vect->items = realloc(vect->items, vect->capacity);                \
+            if (vect->items == NULL)                                           \
+                return 1;                                                      \
+        }                                                                      \
+        vect->items[vect->len++] = item;                                       \
+        return 0;                                                              \
+    }                                                                          \
+    int name##_init(type_name *vect, size_t cap) {                             \
+        vect->items = malloc(sizeof(type) * cap);                              \
+        vect->len = 0;                                                         \
+        vect->capacity = cap;                                                  \
+        return (vect->items == NULL) ? 1 : 0;                                  \
+    }                                                                          \
+    void name##_free(type_name *vect) {                                        \
+        free(vect->items);                                                     \
+        vect->capacity = vect->len = 0;                                        \
+        vect->items = NULL;                                                    \
+    }
+
 #endif
