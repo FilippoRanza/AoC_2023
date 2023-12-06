@@ -11,7 +11,7 @@ typedef struct {
     int second;
 } Couple;
 
-def_matrix(CoupMat, coup_mat, Couple);
+def_matrix(CoupMat, coup_mat, Couple)
 
 typedef struct {
     char *buff;
