@@ -14,9 +14,10 @@ typedef struct {
 
 #define MAPS 7
 
-decl_array(Seeds, seeds, int) decl_array(Maps, maps, Range)
+DECL_ARRAY(Seeds, seeds, int)
+DECL_ARRAY(Maps, maps, Range)
 
-    void parse_seeds(Seeds *seeds, char *line) {
+void parse_seeds(Seeds *seeds, char *line) {
     bool first = true;
     for (char *str = line, *tok; (tok = strtok(str, " ")) != NULL; str = NULL) {
         if (!first) {

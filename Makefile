@@ -8,5 +8,5 @@ build: $(PROGS)
 
 
 % : %.c data_structs.h
-	gcc -ggdb -Wall -Wpedantic -Wextra $< -o $@ 
+	gcc -lm -ggdb -Wall -Wpedantic -Wextra $< -o $@ 
 

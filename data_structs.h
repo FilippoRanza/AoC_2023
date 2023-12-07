@@ -35,7 +35,7 @@
         mat->cols = mat->rows = 0;                                             \
     }
 
-#define decl_array(type_name, name, type)                                      \
+#define DECL_ARRAY(type_name, name, type)                                      \
     typedef struct {                                                           \
         type *items;                                                           \
         size_t len;                                                            \
@@ -44,7 +44,7 @@
     int name##_append(type_name *vect, type item) {                            \
         if (vect->len == vect->capacity) {                                     \
             vect->capacity *= 2;                                               \
-            vect->items = realloc(vect->items, vect->capacity);                \
+            vect->items = realloc(vect->items, sizeof(type) * vect->capacity); \
             if (vect->items == NULL)                                           \
                 return 1;                                                      \
         }                                                                      \
