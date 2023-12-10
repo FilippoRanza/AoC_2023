@@ -61,6 +61,7 @@
         free(vect->items);                                                     \
         vect->capacity = vect->len = 0;                                        \
         vect->items = NULL;                                                    \
-    }
+    }                                                                          \
+    void name##_clear(type_name *vect) { vect->len = 0; }
 
 #endif
