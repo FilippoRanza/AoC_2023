@@ -5,7 +5,7 @@
 
 #define matrix_get_index(mat, i, j) (mat->cols * j) + i;
 
-#define def_matrix(type_name, name, type)                                      \
+#define DEF_MATRIX(type_name, name, type)                                      \
     typedef struct {                                                           \
         type *items;                                                           \
         size_t cols;                                                           \
