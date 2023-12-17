@@ -98,7 +98,7 @@ char inmat_at_is_one_of(InMat *mat, int row, int col, char *buff) {
         return '\0';
 
     char ch = inmat_char_at(mat, row, col);
-    for (char tmp = *buff; tmp != EOF; tmp = *buff++) {
+    for (char tmp = *buff++; tmp != '\0'; tmp = *buff++) {
         if (tmp == ch)
             return ch;
     }
@@ -134,14 +134,13 @@ char convert_initial_point(InMat *mat, Coord *coord) {
 typedef struct {
     Coord coord;
     int dist;
-
 } Element;
 
 typedef struct {
     Element *heap;
     size_t len;
-    size_t head;
-    size_t tail;
+    // size_t head;
+    // size_t tail;
     size_t capacity;
 } Queue;
 
@@ -154,18 +153,59 @@ void queue_init(Queue *queue, size_t capacity) {
     queue->heap = heap;
     queue->capacity = capacity;
     queue->len = 0;
-    queue->head = queue->tail = 0;
+    // queue->head = queue->tail = 0;
+}
+
+void queue_swap_items(Queue *queue, size_t curr, size_t parent) {
+    Element e = queue->heap[curr];
+    queue->heap[curr] = queue->heap[parent];
+    queue->heap[parent] = e;
 }
 
 Element queue_pop(Queue *queue) {
-    Element output = queue->heap[queue->tail];
-    queue->tail = (queue->tail + 1) % queue->capacity;
+
+    size_t curr = 0;
+    Element output = queue->heap[curr];
     queue->len--;
+    if (queue->len == 0)
+        return output;
+
+    queue_swap_items(queue, curr, queue->len);
+    queue->heap[queue->len].dist = -1;
+
+    bool run = true;
+    while (run) {
+        size_t left = (2 * curr) + 1;
+        size_t right = (2 * curr) + 2;
+
+        if (left < queue->len &&
+            queue->heap[curr].dist > queue->heap[left].dist) {
+            queue_swap_items(queue, curr, left);
+            curr = left;
+        } else if (right < queue->len &&
+                   queue->heap[curr].dist > queue->heap[right].dist) {
+            queue_swap_items(queue, curr, right);
+            curr = right;
+        } else {
+            run = false;
+        }
+    }
+
     return output;
 }
 
 void queue_push(Queue *queue, Element e) {
-    queue->heap[queue->head] = e;
+
+    size_t curr = queue->len;
+    queue->heap[curr] = e;
+    size_t parent = curr / 2;
+
+    while (queue->heap[curr].dist < queue->heap[parent].dist) {
+        queue_swap_items(queue, curr, parent);
+        curr = parent;
+        parent = curr / 2;
+    }
+
     queue->len++;
     if (queue->len == queue->capacity) {
         queue->capacity *= 2;
@@ -173,10 +213,9 @@ void queue_push(Queue *queue, Element e) {
         if (queue->heap == NULL)
             abort();
     }
-    queue->head = (queue->head + 1) % queue->capacity;
 }
 
-int queue_is_empty(Queue *queue) { return queue->head == queue->tail; }
+int queue_is_empty(Queue *queue) { return queue->len == 0; }
 
 void queue_free(Queue *queue) { free(queue->heap); }
 
